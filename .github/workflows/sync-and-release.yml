@@ -98,14 +98,15 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           TAG="${{ steps.check.outputs.upstream_tag }}"
+          REPO="${{ github.repository }}"
 
           # Trigger release workflow
-          gh workflow run release.yml -f tag="$TAG"
+          gh workflow run release.yml -f tag="$TAG" --repo "$REPO"
 
           # Wait for the release to be created
           echo "Waiting for release workflow..."
           for i in $(seq 1 60); do
-            if gh release view "$TAG" --repo "${{ github.repository }}" &>/dev/null; then
+            if gh release view "$TAG" --repo "$REPO" &>/dev/null; then
               echo "Release found after ${i}0s"
               break
             fi
@@ -115,5 +116,5 @@ jobs:
           # Copy release notes from upstream
           UPSTREAM_NOTES=$(gh release view "$TAG" --repo "moo-man/WrathAndGlory-FoundryVTT" --json body -q .body 2>/dev/null || echo "")
           if [ -n "$UPSTREAM_NOTES" ]; then
-            gh release edit "$TAG" --notes "$UPSTREAM_NOTES"
+            gh release edit "$TAG" --repo "$REPO" --notes "$UPSTREAM_NOTES"
           fi
