@@ -50,16 +50,7 @@ jobs:
           TAG="${{ steps.check.outputs.upstream_tag }}"
           git remote add upstream https://github.com/moo-man/WrathAndGlory-FoundryVTT.git || true
           git fetch upstream --tags --force
-          git reset --hard "refs/tags/$TAG"
-
-      - name: Restore fork workflows
-        if: steps.check.outputs.skip == 'false'
-        run: |
-          mkdir -p .github/workflows
-          curl -fsSL "https://raw.githubusercontent.com/${{ github.repository }}/master/.github/workflows/release.yml" \
-            -o .github/workflows/release.yml
-          curl -fsSL "https://raw.githubusercontent.com/${{ github.repository }}/master/.github/workflows/sync-and-release.yml" \
-            -o .github/workflows/sync-and-release.yml
+          git checkout --detach "refs/tags/$TAG"
 
       - name: Apply patches
         if: steps.check.outputs.skip == 'false'
@@ -70,7 +61,6 @@ jobs:
 
           # Rewrite system.json URLs to pfizrak fork
           REPO="${{ github.repository }}"
-          TAG="${{ steps.check.outputs.upstream_tag }}"
 
           sed -i "s|moo-man/WrathAndGlory-FoundryVTT|${REPO}|g" system.json
           sed -i "s|moo-man/WarhammerLibrary-FVTT|pfizrak/WarhammerLibrary-FVTT|g" system.json
@@ -81,7 +71,7 @@ jobs:
           echo "=== Patched system.json ==="
           cat system.json
 
-      - name: Commit, tag and push
+      - name: Commit and push tag
         if: steps.check.outputs.skip == 'false'
         run: |
           TAG="${{ steps.check.outputs.upstream_tag }}"
@@ -90,7 +80,7 @@ jobs:
           git add -A
           git commit -m "Sync upstream ${TAG} with fork patches"
           git tag -f "$TAG"
-          git push --force origin HEAD:master --tags
+          git push origin "refs/tags/$TAG" --force
 
       - name: Trigger release and copy notes
         if: steps.check.outputs.skip == 'false'
@@ -100,8 +90,8 @@ jobs:
           TAG="${{ steps.check.outputs.upstream_tag }}"
           REPO="${{ github.repository }}"
 
-          # Trigger release workflow
-          gh workflow run release.yml -f tag="$TAG" --repo "$REPO"
+          # Trigger release workflow via dispatch (tag push may also trigger it)
+          gh workflow run release.yml -f tag="$TAG" --repo "$REPO" || true
 
           # Wait for the release to be created
           echo "Waiting for release workflow..."
