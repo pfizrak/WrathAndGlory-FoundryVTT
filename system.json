@@ -48,7 +48,7 @@
     "requires": [{
       "id": "warhammer-lib",
       "type": "module",
-      "manifest": "https://raw.githubusercontent.com/moo-man/WarhammerLibrary-FVTT/2.10.0/module.json",
+      "manifest": "https://github.com/pfizrak/WarhammerLibrary-FVTT/releases/latest/download/module.json",
       "compatibility": {
         "minimum" : "2.10.0",
         "verified": "2.10.0"
@@ -64,10 +64,10 @@
   },
   "primaryTokenAttribute": null,
   "secondaryTokenAttribute": null,
-  "url": "https://github.com/moo-man/WrathAndGlory-FoundryVTT",
+  "url": "https://github.com/pfizrak/WrathAndGlory-FoundryVTT",
   "socket": true,
-  "manifest": "https://github.com/moo-man/WrathAndGlory-FoundryVTT/releases/latest/download/system.json",
-  "download": "https://github.com/moo-man/WrathAndGlory-FoundryVTT/releases/download/7.4.0/wrath-and-glory.zip",
+  "manifest": "https://github.com/pfizrak/WrathAndGlory-FoundryVTT/releases/latest/download/system.json",
+  "download": "https://github.com/pfizrak/WrathAndGlory-FoundryVTT/releases/download/7.4.0/wrath-and-glory.zip",
   "license": "LICENSE.txt"
 }
 
