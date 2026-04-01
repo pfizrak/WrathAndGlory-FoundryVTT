@@ -71,6 +71,15 @@ jobs:
           echo "=== Patched system.json ==="
           cat system.json
 
+      - name: Restore fork workflows
+        if: steps.check.outputs.skip == 'false'
+        run: |
+          mkdir -p .github/workflows
+          curl -sL "https://raw.githubusercontent.com/${{ github.repository }}/master/.github/workflows/release.yml" \
+            -o .github/workflows/release.yml
+          curl -sL "https://raw.githubusercontent.com/${{ github.repository }}/master/.github/workflows/sync-and-release.yml" \
+            -o .github/workflows/sync-and-release.yml
+
       - name: Commit and push tag
         if: steps.check.outputs.skip == 'false'
         run: |
